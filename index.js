@@ -47,15 +47,8 @@ server.get("/api/users", (req, res) => {
 
 server.get("/api/users/:id", (req, res) => {
   //findById(id)
-  //   const getId = Users.findById(req.params.id);
+
   const getId = req.params.id;
-  //   if (getId !== Users.findById(req.params.id)) {
-  //   if (getId !== Users.find(req.params.id)) {
-  //   if (!getId) {
-  //     res
-  //       .status(404)
-  //       .json({ message: "The user with the specified ID does not exist." });
-  //   } else {
 
   Users.findById(getId)
     .then(user => {
@@ -79,7 +72,13 @@ server.delete("/api/users/:id", (req, res) => {
   const id = req.params.id;
   Users.remove(id)
     .then(user => {
-      res.status(200).json({ message: "That User's outta here" });
+      if (!user) {
+        res
+          .status(404)
+          .json({ message: "The user with the specified ID does not exist." });
+      } else {
+        res.status(200).json({ message: "That User's outta here", user });
+      }
     })
     .catch(err => {
       res
@@ -87,34 +86,6 @@ server.delete("/api/users/:id", (req, res) => {
         .json({ message: "The user with the specified ID does not exist." });
     });
 });
-
-// server.put("/api/users/:id", (req, res) => {
-//   //update(id, user)
-//   const id = req.params.id;
-//   const { name, bio } = req.body;
-
-//   if (!id) {
-//     res
-//       .status(404)
-//       .json({ message: "The user with the specified ID does not exist." });
-//   } else {
-//     if (!name || !bio) {
-//       res
-//         .status(400)
-//         .json({ message: "Please provide name and bio for the user." });
-//     } else {
-//       Users.update(id, { name, bio })
-//         .then(updated => {
-//           res.status(200).json(updated);
-//         })
-//         .catch(err => {
-//           res
-//             .status(500)
-//             .json({ message: "The user information could not be modified." });
-//         });
-//     }
-//   }
-// });
 
 server.put("/api/users/:id", (req, res) => {
   //update(id, user)
@@ -124,14 +95,16 @@ server.put("/api/users/:id", (req, res) => {
   Users.update(putId, { name, bio })
     .then(updated => {
       if (!updated) {
-        res
-          .status(404)
-          .json({ message: "The user with the specified ID does not exist." });
+        res.status(404).json({
+          message: "The user with the specified ID does not exist.",
+          updated
+        });
       } else {
         if (!name || !bio) {
-          res
-            .status(400)
-            .json({ message: "Please provide name and bio for the user." });
+          res.status(400).json({
+            message: "Please provide name and bio for the user.",
+            updated
+          });
         } else {
           res.status(200).json({ message: "ok", updated });
         }
