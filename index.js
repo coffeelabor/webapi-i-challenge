@@ -11,15 +11,35 @@ server.get("/", (req, res) => {
   res.send("howdy");
 });
 
-server.get("/users", (req, res) => {
+server.post("/api/users", (req, res) => {
+  const { name, bio } = req.body;
+
+  if (!name || !bio) {
+    res
+      .status(400)
+      .json({ message: "Please provide name and bio for the user." });
+  } else {
+    Users.insert(req.body)
+      .then(user => {
+        res.status(201).json(user);
+      })
+      .catch(err => {
+        res
+          .status(500)
+          .json({ message: "The users information could not be retrieved." });
+      });
+  }
+});
+
+server.get("/api/users", (req, res) => {
   Users.find()
     .then(user => {
       res.status(200).json(user);
     })
-    .catch(error => {
+    .catch(err => {
       res
         .status(500)
-        .json({ message: "Bad news bruh, you cannot GET that array" });
+        .json({ message: "The users information could not be retrieved." });
     });
 });
 
