@@ -12,6 +12,7 @@ server.get("/", (req, res) => {
 });
 
 server.post("/api/users", (req, res) => {
+  //insert(user)
   const { name, bio } = req.body;
 
   if (!name || !bio) {
@@ -32,6 +33,7 @@ server.post("/api/users", (req, res) => {
 });
 
 server.get("/api/users", (req, res) => {
+  //find()
   Users.find()
     .then(user => {
       res.status(200).json(user);
@@ -44,27 +46,36 @@ server.get("/api/users", (req, res) => {
 });
 
 server.get("/api/users/:id", (req, res) => {
-  //   const id = Users.findById(req.params.id);
-  const id = req.params.id;
-  //   if (id !== Users.findById(req.params.id)) {
-  if (!id) {
-    res
-      .status(404)
-      .json({ message: "The user with the specified ID does not exist." });
-  } else {
-    Users.findById(id)
-      .then(user => {
-        res.status(200).json(user);
-      })
-      .catch(err => {
+  //findById(id)
+  //   const getId = Users.findById(req.params.id);
+  const getId = req.params.id;
+  //   if (getId !== Users.findById(req.params.id)) {
+  //   if (getId !== Users.find(req.params.id)) {
+  //   if (!getId) {
+  //     res
+  //       .status(404)
+  //       .json({ message: "The user with the specified ID does not exist." });
+  //   } else {
+
+  Users.findById(getId)
+    .then(user => {
+      if (!user) {
         res
-          .status(500)
-          .json({ error: "The user information could not be retrieved." });
-      });
-  }
+          .status(404)
+          .json({ message: "The user with the specified ID does not exist." });
+      } else {
+        res.status(200).json(user);
+      }
+    })
+    .catch(err => {
+      res
+        .status(500)
+        .json({ error: "The user information could not be retrieved." });
+    });
 });
 
 server.delete("/api/users/:id", (req, res) => {
+  //remove(id)
   const id = req.params.id;
   Users.remove(id)
     .then(user => {
@@ -78,6 +89,7 @@ server.delete("/api/users/:id", (req, res) => {
 });
 
 server.put("/api/users/:id", (req, res) => {
+  //update(id, user)
   const id = req.params.id;
   const { name, bio } = req.body;
 
