@@ -43,5 +43,39 @@ server.get("/api/users", (req, res) => {
     });
 });
 
+server.get("/api/users/:id", (req, res) => {
+  //   const id = Users.findById(req.params.id);
+  const id = req.params.id;
+  //   if (id !== Users.findById(req.params.id)) {
+  if (!id) {
+    res
+      .status(404)
+      .json({ message: "The user with the specified ID does not exist." });
+  } else {
+    Users.findById(id)
+      .then(user => {
+        res.status(200).json(user);
+      })
+      .catch(err => {
+        res
+          .status(500)
+          .json({ error: "The user information could not be retrieved." });
+      });
+  }
+});
+
+server.delete("/api/users/:id", (req, res) => {
+  const id = req.params.id;
+  Users.remove(id)
+    .then(user => {
+      res.status(200).json({ message: "That User's outta here" });
+    })
+    .catch(err => {
+      res
+        .catch(500)
+        .json({ message: "The user with the specified ID does not exist." });
+    });
+});
+
 const port = 8000;
 server.listen(port, () => console.log("api is feelin like a million bucks"));
