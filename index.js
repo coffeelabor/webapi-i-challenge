@@ -77,5 +77,32 @@ server.delete("/api/users/:id", (req, res) => {
     });
 });
 
+server.put("/api/users/:id", (req, res) => {
+  const id = req.params.id;
+  const { name, bio } = req.body;
+
+  if (!id) {
+    res
+      .status(404)
+      .json({ message: "The user with the specified ID does not exist." });
+  } else {
+    if (!name || !bio) {
+      res
+        .status(400)
+        .json({ message: "Please provide name and bio for the user." });
+    } else {
+      Users.update(id, { name, bio })
+        .then(updated => {
+          res.status(200).json(updated);
+        })
+        .catch(err => {
+          res
+            .status(500)
+            .json({ message: "The user information could not be modified." });
+        });
+    }
+  }
+});
+
 const port = 8000;
 server.listen(port, () => console.log("api is feelin like a million bucks"));
